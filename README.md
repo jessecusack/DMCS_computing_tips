@@ -1,4 +1,4 @@
-# DMCS Coding Tips
+# DMCS Computing Tips
 
 ## Contents
 
