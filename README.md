@@ -12,3 +12,12 @@ All tips (so far) assume that you're using macOS/Linux.
 ### Misc
 
 * [Installing Octant with conda](octant.md) The package [octant](https://github.com/hetland/octant.git) was created by Rob Hetland for use with ROMS. It is obsolete but (perhaps?) still useful. 
+
+
+### Presentation
+
+Install `pandoc`, (e.g. `conda install -c conda-forge pandoc`) to compile the presentation:
+
+```bash
+pandoc -t beamer -s presentation.txt -o presentation.pdf
+```
