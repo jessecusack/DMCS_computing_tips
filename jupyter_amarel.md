@@ -11,7 +11,7 @@ There are two main ways of using `jupyter lab` on Amarel, 1) via your own instal
     2. The DMCS specific version of conda can be loaded as `module load xroms`, but you need access to the DMCS partition. 
 
 
-Everything below is easier with [ssh keys](easy_amarel.md). 
+More detailed instructions for 1. are below, note that using [ssh keys](easy_amarel.md) makes everything a little faster and easier! 
 
 ### Installing [Miniconda](https://docs.conda.io/en/latest/miniconda.html) in your home directory
 
@@ -80,8 +80,10 @@ conda install -c conda-forge jupyter-forward
 To use `jupyter-forward` to launch a remote jupyter lab session, run a command like this on your own computer (replacing username appropriately):
 
 ```bash
-jupyter-forward --port=8898 --conda-env=base --launch-command="srun --partition=main --mem=8000 --time=4:00:00" [username]@amarel.rutgers.edu
+jupyter-forward --port=8898 --launch-command="srun --partition=main --mem=8G --time=00:30:00" [username]@amarel.rutgers.edu
 ```
+
+If you add the option `--conda-env=base` then the base environment will be activated prior to starting jupyter lab. This can be useful if you have installed your own version of jupyter lab in a separate enviorment and want to use that. 
 
 You may be prompted for your Amarel password (which ideally would not happen with ssh keys, but it might be a small bug with `jupyter-forward`)
 
@@ -103,27 +105,37 @@ For the above to work, I set up an ssh key-pair with amarel and edited my local 
 
 Within Amarel, start a `tmux` session, which will stay running even if you are disconnected.
 
-    tmux new -s jlab
+```bash
+tmux new -s jlab
+```
     
 If `tmux` is not available, you might need to load it with `module load tmux` or use `screen` instead. Next, start an interactive session using the SLURM `srun` command.
     
-    srun --partition=main -n 1 --mem=8G --time=08:00:00 --pty bash
-    
+```bash
+srun --partition=main -n 1 --mem=8G --time=00:30:00 --pty bash
+```
+
 Above I requested a single compute node with 8 GB of memory for 8 hours. This can obviously be adjusted to suit the need. After a moment we should be assigned a node. We need to know the `hostname` of the node we're on e.g.
-    
-    echo $(hostname)
+
+```bash
+echo $(hostname)
+```
     
 Copy the result of the above command somewhere, we'll need it later. Next, start up jupyter lab, navigating to a particular project folder if necessary e.g.
 
-    cd ~/some_project
-    jupyter lab --no-browser --port=8897 --ip="$(hostname)"
+```bash
+cd ~/some_project
+jupyter lab --no-browser --port=8897 --ip="$(hostname)"
+```
     
 After which I hit `ctrl + b` followed immediately by `d` to disconnect from the tmux session.
     
 On my personal computer I run:
 
-    ssh -L 8897:[hostname]:8897 -N amarel
-    
+```bash
+ssh -L 8897:[hostname]:8897 -N amarel
+```
+
 where `[hostname]` is replaced by the output of `echo $(hostname)` from the Amarel session. The command establishes a connection between port 8897 on the Amarel compute node to the same port on your computer (they don't have to be the same, but it is easier to remember). 
 
 Jupyter lab can then be accessed in a browser on you personal computer from `localhost:8897` (pop it straight into the URL bar). I highly recommend making use of jupyter lab's [workspaces](https://jupyterlab.readthedocs.io/en/stable/user/urls.html) feature to avoid a cluttered working environment if you have several projects.
@@ -132,18 +144,26 @@ Jupyter lab can then be accessed in a browser on you personal computer from `loc
 
 Deactivate (temporarily) your home installation of conda.
 
-    conda deactivate
-    
-Load the xroms installation.
-    
-    module load xroms
-    
-Install the xroms kernel.    
+```bash
+conda deactivate
+```
 
-    python -m ipykernel install --user --name xroms
-    
+Load the xroms installation.
+
+```bash
+module load xroms
+```
+
+Install the xroms kernel.   
+
+```bash
+python -m ipykernel install --user --name xroms
+```
+
 Unload xroms.
 
-    module unload xroms
-    
+```bash
+module unload xroms
+```
+
 Now you can set your notebooks to make use of the `xroms` kernel or you can use it via the terminal with `conda activate xroms`, without needing to load the module. 
