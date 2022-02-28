@@ -69,6 +69,8 @@ conda remove --name testenv --all
 
 Kernels are running instances of your conda environments. Notebooks can be set to use specific kernels. 
 
+
+## Install
 ```bash
 conda activate testenv
 python -m ipykernel install --user --name testenv
@@ -80,12 +82,13 @@ python -m ipykernel install --user --name testenv
 
 For this you need the `jupyter` package which can be installed in the base (default) environment. 
 
+## List
 ```bash
 conda activate base
 jupyter kernelspec list
 ```
 
-To remove the kernel use:
+## Remove
 
 ```bash
 jupyter kernelspec remove testenv
@@ -98,9 +101,38 @@ Drop down box on the right hand side.
 
 # Amarel
 
-```bash
-conda load xroms
+There are two conda installations accessible via community and DMCS packages.
+
+Add to `.bashrc`:
 ```
+module use /projects/dmcs_1/sw/modulefiles/Core
+module use /projects/community/modulefiles
+module load xroms
+# OR module load anaconda
+```
+
+# Install miniconda on Amarel
+
+This is really easy and gives you full control. 
+
+```bash
+ssh amarel
+cd ~
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+```
+
+You could still use xroms afterwards via a kernel. 
+
+```bash
+conda deactivate # to deactivate your own version
+conda load xroms
+python -m ipykernel install --user --name xroms
+```
+
+Then remove `module load xroms` from your `.bashrc`.
 
 # Running jupyter lab remotely
 
@@ -148,8 +180,17 @@ conda install -c conda-forge jupyter-forward
 
 ### Run the (long) one-liner:
 
+* You must have some version of `conda` **WITH** `jupyter lab` available on Amarel, either your own installation, xroms (put `module load xroms` in your `.bashrc`) or the other anaconda distribution (put `module load anaconda` in your `.bashrc`). 
+
 ```bash
 jupyter-forward --port=8898 --launch-command="srun 
     --partition=main --mem=8G --time=00:30:00" 
     [username]@amarel.rutgers.edu
 ```
+
+# Remote Jupyter Lab Summary
+
+* Rapidly test code on compute nodes with little overhead.
+* Access full jupyter lab environment.
+* With your own installation you can customise everything (with jupyter lab extensions).
+* Use environments and kernels for different package configurations. 
