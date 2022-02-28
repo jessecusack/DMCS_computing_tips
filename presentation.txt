@@ -118,7 +118,7 @@ jupyter lab --no-browser --port=8897 --ip="$(hostname)"
 # this to work
 ```
 
-Then hit `ctrl+b, d` to disconnect from tmux. 
+**Copy the token and note the hostname!** Then hit `ctrl+b, d` to disconnect from tmux. Run `tmux a` to reconnect. 
 
 # Running jupyter lab remotely
 
@@ -132,6 +132,8 @@ Then put `localhost:8897 in my browser. You'll need to paste the token or create
 ```bash
 jupyter server password
 ```
+
+This method is robust to disconnections! Simply run the above `ssh` command again and refresh your browser. 
 
 # Running jupyter lab remotely
 
