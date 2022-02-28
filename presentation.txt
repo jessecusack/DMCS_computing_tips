@@ -1,0 +1,153 @@
+% Conda Environments and Jupyter
+% Jesse Cusack
+% \today
+
+# Conda
+
+* Installing anaconda/miniconda gives you access to the `conda` package manager (GUI/terminal)
+* Use the more complete `conda-forge` channel to install packages
+
+After installing anaconda/miniconda run:
+```bash
+conda config --add channels conda-forge
+conda config --set channel_priority strict 
+```
+
+# Conda environments
+
+* Conda environments are just collections of software packages (typically python packages, but could be anything - i.e. `wget`) 
+* Can consider environments like isolated python installations. [`octant`](https://github.com/hetland/octant) is a great example why this is useful. It needed python version 2.7 so is incompatible with newer packages (e.g. `xarray`) that use python 3. 
+
+# Installing conda environments
+
+## Command line
+
+```bash
+conda create -n testenv -c conda-force python=3.* 
+    ipykernel numpy matplotlib
+```
+
+## Using a `yaml` file e.g.
+
+```bash
+conda env create -f environment.yaml
+```
+
+```
+name: testenv
+channels:
+- conda-forge
+- defaults
+dependencies:
+- python=3.*
+- ipykernel
+- numpy
+- matplotlib
+```
+
+# Managing conda environments
+
+## Change environment with:
+
+```bash
+conda activate [environment]
+```
+
+## Deactivate:
+
+```bash
+conda deactivate
+```
+
+## Remove with:
+
+```bash
+conda remove --name testenv --all
+```
+
+# Kernels
+
+Kernels are running instances of your conda environments. Notebooks can be set to use specific kernels. 
+
+```bash
+conda activate testenv
+python -m ipykernel install --user --name testenv
+```
+
+(This is why you need to install the `ipykernel` package)
+
+# Managing kernels
+
+For this you need the `jupyter` package which can be installed in the base (default) environment. 
+
+```bash
+conda activate base
+jupyter kernelspec list
+```
+
+To remove the kernel use:
+
+```bash
+jupyter kernelspec remove testenv
+```
+
+# Making use of kernels in notebooks
+
+Drop down box on the right hand side. 
+
+
+# Amarel
+
+```bash
+conda load xroms
+```
+
+# Running jupyter lab remotely
+
+## Method 1 - manually 
+
+### On Amarel:
+```bash
+module load tmux
+tmux new
+srun --partition=main -n 1 --mem=8G --time=00:30:00 
+    --pty bash
+echo $(hostname)
+jupyter lab --no-browser --port=8897 --ip="$(hostname)"
+# I have `module load xroms` in my `.bashrc` for 
+# this to work
+```
+
+Then hit `ctrl+b, d` to disconnect from tmux. 
+
+# Running jupyter lab remotely
+
+### On my laptop:
+```bash
+ssh -L 8897:[hostname]:8897 -N amarel
+# hostname e.g. slepner010
+```
+Then put `localhost:8897 in my browser. You'll need to paste the token or create a password using: 
+
+```bash
+jupyter server password
+```
+
+# Running jupyter lab remotely
+
+## Method 2 - jupyter-forward
+
+On your laptop install jupyter-forward e.g. 
+
+```bash
+conda activate base
+conda install -c conda-forge jupyter-forward
+```
+
+### Run the (long) one-liner:
+
+```bash
+jupyter-forward --port=8898 --launch-command="srun 
+    --partition=main --mem=8G --time=00:30:00" 
+    [username]@amarel.rutgers.edu
+```
