@@ -2,7 +2,14 @@
 % Jesse Cusack
 % \today
 
-# Conda
+# Objectives
+
+1. Flip between conda environments in notebooks
+2. One-line terminal command jupyter lab on amarel compute node
+
+Que: demo
+
+# About conda
 
 * Installing anaconda/miniconda gives you access to the `conda` package manager (GUI/terminal)
 * Use the more complete `conda-forge` channel to install packages
@@ -13,17 +20,18 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict 
 ```
 
-# Conda environments
-
-* Conda environments are just collections of software packages (typically python packages, but could be anything - i.e. `wget`) 
-* Can consider environments like isolated python installations. [`octant`](https://github.com/hetland/octant) is a great example why this is useful. It needed python version 2.7 so is incompatible with newer packages (e.g. `xarray`) that use python 3. 
+Look at packages and environment:
+```bash
+conda list  # shows installed packages in your current environment
+conda env list # shows your environments
+```
 
 # Installing conda environments
 
 ## Command line
 
 ```bash
-conda create -n testenv -c conda-force python=3.* 
+conda create -n testenv -c conda-forge python=3.10
     ipykernel numpy matplotlib
 ```
 
@@ -52,6 +60,7 @@ dependencies:
 ```bash
 conda activate [environment]
 ```
+Then you can run packages and scripts. 
 
 ## Deactivate:
 
@@ -65,10 +74,14 @@ conda deactivate
 conda remove --name testenv --all
 ```
 
+# Conda environments summary
+
+* Conda environments are just collections of software packages (typically python packages, but could be anything - i.e. `wget`) 
+* Can consider environments like isolated python installations. [`octant`](https://github.com/hetland/octant) is a great example why this is useful. It needed python version 2.7 so is incompatible with newer packages (e.g. `xarray`) that use python 3. 
+
 # Kernels
 
 Kernels are running instances of your conda environments. Notebooks can be set to use specific kernels. 
-
 
 ## Install
 ```bash
@@ -96,10 +109,22 @@ jupyter kernelspec remove testenv
 
 # Making use of kernels in notebooks
 
-Drop down box on the right hand side. 
+Drop down box on the right hand side.
 
+# Summary workflow
+
+* Exploring a python research project e.g.:
+
+[https://github.com/jessecusack/example_research_project](https://github.com/jessecusack/example_research_project)
+
+1. Clone/download the github repo
+1. Install/create the conda environment
+1. Install the kernel for the environment
+1. Run the analysis in jupyter lab
 
 # Amarel
+
+Que: login
 
 There are two conda installations accessible via community and DMCS packages.
 
@@ -111,7 +136,7 @@ module load xroms
 # OR module load anaconda
 ```
 
-# Install miniconda on Amarel
+# Install miniconda on Amarel (for reference)
 
 This is really easy and gives you full control. 
 
@@ -140,8 +165,7 @@ Then remove `module load xroms` from your `.bashrc`.
 
 ### On Amarel:
 ```bash
-module load tmux
-tmux new
+tmux  # OR screen
 srun --partition=main -n 1 --mem=8G --time=00:30:00 
     --pty bash
 echo $(hostname)
@@ -159,7 +183,7 @@ jupyter lab --no-browser --port=8897 --ip="$(hostname)"
 ssh -L 8897:[hostname]:8897 -N amarel
 # hostname e.g. slepner010
 ```
-Then put `localhost:8897 in my browser. You'll need to paste the token or create a password using: 
+Then put `localhost:8897 in your browser. You'll need to paste the token or create a password using: 
 
 ```bash
 jupyter server password
@@ -188,7 +212,7 @@ jupyter-forward --port=8898 --launch-command="srun
     [username]@amarel.rutgers.edu
 ```
 
-# Remote Jupyter Lab Summary
+# Remote jupyter lab summary
 
 * Rapidly test code on compute nodes with little overhead.
 * Access full jupyter lab environment.
